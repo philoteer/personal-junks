@@ -20,7 +20,7 @@ unset IFS; set +f
 
 IFS=$'\n'; set -f
 
-for f in  $(find ./ -name '*.jpg') 
+for f in  $(find ./ -name '*.*')	#change to image file extensions 
 do
 	#taken from: http://www.imagemagick.org/discourse-server/viewtopic.php?t=34020
 	#detect grayscale
