@@ -7,13 +7,13 @@ IFS=$'\n'; set -f
 ZIP_EXISTS=1
 
 while [ $ZIP_EXISTS -gt 0 ]; do
+	ZIP_EXISTS=0
 	for f in  $(find ./ -name '*.zip' -or -name '*.rar')
 	do
 		unar -e cp949 $f
 		rm $f
 		ZIP_EXISTS=1
 	done
-	ZIP_EXISTS=0
 done
 unset IFS; set +f
 
