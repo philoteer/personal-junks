@@ -2,7 +2,7 @@
 
 #get pdf list
 echo "Creating a file list."
-find . -name "*.pdf" > pdf_list
+find . -iname "*.pdf" > pdf_list
 
 #shrinkpdf functionality check
 echo "Verifying the functionality of shrinkpdf script."
