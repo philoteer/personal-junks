@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DPI=150
+
 #get pdf list
 echo "Creating a file list."
 find . -iname "*.pdf" > pdf_list
@@ -20,7 +22,7 @@ do
 	echo "$j"
 	mv "$j" 1.pdf
 	#shrinkpdf 1.pdf 2.pdf || { echo 'something is wrong' ; exit 1; }
-	./pdfshrink.sh 1.pdf 2.pdf
+	./pdfshrink.sh 1.pdf 2.pdf $DPI
 	rm 1.pdf
 	mv 2.pdf "$j"
 done
