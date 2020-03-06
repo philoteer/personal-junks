@@ -34,7 +34,7 @@ do
 	echo "[$CURRENT_COUNT/$LINES_COUNT] $j"
 	cp "$j" "$TMP_FILENAME_1"  #used to be mv instead; changed to minimize chance of losing files. 
 	#sh $EXEC_PATH "$TMP_FILENAME_1" "$TMP_FILENAME_2"|| { echo 'something is wrong' ; exit 1; }
-	sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG || CURRENT_COUNT=`expr $CURRENT_COUNT + 1`; continue
+	sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG || continue
 	rm "$TMP_FILENAME_1" 
 	rm "$j"
 	
