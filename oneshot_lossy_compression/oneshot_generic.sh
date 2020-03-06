@@ -37,7 +37,13 @@ do
 	sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG
 	rm "$TMP_FILENAME_1" 
 	rm "$j"
-	mv "$TMP_FILENAME_2" "$j"
+	
+	if [ $EXTENSION == $TARGET_EXTENSION ]
+	then
+		mv "$TMP_FILENAME_2" "$j"
+	else
+		mv "$TMP_FILENAME_2" "${j}.${TARGET_EXTENSION}"
+	fi
 	
 	CURRENT_COUNT=`expr $CURRENT_COUNT + 1`
 done
