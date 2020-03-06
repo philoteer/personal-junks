@@ -1,3 +1,5 @@
+#!/bin/bash	
+
 export EXTENSION=ps
 export TARGET_EXTENSION=pdf
 export EXEC_PATH="pdfshrink.sh"
