@@ -50,3 +50,6 @@ done
 
 #remove the tmp file.
 rm "$TMP_LIST_FILENAME"
+
+DIFF_COUNT=`expr $LINES_COUNT - $CURRENT_COUNT`
+echo "Skipped files (due to errors): $DIFF_COUNT"
