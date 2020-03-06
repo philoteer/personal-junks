@@ -1,5 +1,5 @@
+-bug: if target extension != current extension, and if the "compressed file" is larger, scripts may screw up file extensions.
 -multithreading
 -doc
 -docx
--jpeg | tif | tiff | 
 -videos
