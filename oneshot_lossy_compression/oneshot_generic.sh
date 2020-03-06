@@ -4,12 +4,13 @@
 
 #list of variables
 #EXTENSION=pdf
+#TARGET_EXTENSION=pdf
 #EXEC_PATH="pdfshrink.sh"
 #QUAL_ARG=150
 
-TMP_FILENAME_1="__1.$EXTENSION"
-TMP_FILENAME_2="__2.$EXTENSION"
-TMP_LIST_FILENAME="__$EXTENSION_list"
+TMP_FILENAME_1="__1.${EXTENSION}"	#original file (temporarily copied)
+TMP_FILENAME_2="__2.${TARGET_EXTENSION}"	#output file
+TMP_LIST_FILENAME="__${EXTENSION}_list"
 
 #get file list
 echo "Creating a file list."
