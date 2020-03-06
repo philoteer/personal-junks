@@ -3,6 +3,10 @@
 #(for now, some bashisms are going on)
 
 #list of variables
+#EXTENSION=ps
+#TARGET_EXTENSION=pdf
+#EXEC_PATH="pdfshrink.sh"
+#QUAL_ARG=150 
 
 TMP_FILENAME_1="__1.${EXTENSION}"	#original file (temporarily copied)
 TMP_FILENAME_2="__2.${TARGET_EXTENSION}"	#output file
