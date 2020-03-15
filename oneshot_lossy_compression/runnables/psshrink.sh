@@ -94,4 +94,11 @@ else
 	res="72"
 fi
 
+
+if [! -z "$4" ]; then
+	size_req="$4"
+else
+	size_req="100"
+fi
+
 shrink "$IFILE" "$OFILE" "$res" || exit $?
