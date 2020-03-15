@@ -68,7 +68,7 @@ check_smaller ()
 	OSIZE="$(echo $(wc -c "$2") | cut -f1 -d\ )"
 	MIN_DESIRED_OSIZE=`expr \( $ISIZE \* $SIZE_REQ \) / 100`
 	
-	if [ "$ISIZE" -lt "$OSIZE" ]; then
+	if [ "$MIN_DESIRED_OSIZE" -lt "$OSIZE" ]; then
 		echo "Input smaller than output, doing straight copy" >&2
 		cp "$1" "$2"
 	fi
