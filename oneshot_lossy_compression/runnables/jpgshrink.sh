@@ -44,13 +44,23 @@ check_smaller ()
 	if [ ! -f "$1" -o ! -f "$2" ]; then
 		return 0;
 	fi
+	
+	if [! -z "$3" ]; then
+		SIZE_REQ="$3"
+	else
+		SIZE_REQ="100"
+	fi
+	
 	ISIZE="$(echo $(wc -c "$1") | cut -f1 -d\ )"
 	OSIZE="$(echo $(wc -c "$2") | cut -f1 -d\ )"
-	if [ "$ISIZE" -lt "$OSIZE" ]; then
-		echo "Input smaller than output, doing straight copy" >&2
+	MIN_DESIRED_OSIZE=`expr \( $ISIZE \* $SIZE_REQ \) / 100`
+	
+	if [ "$MIN_DESIRED_OSIZE" -lt "$OSIZE" ]; then
+		echo "Input smaller than desired; doing straight copy" >&2
 		cp "$1" "$2"
 	fi
 }
+
 
 usage ()
 {
