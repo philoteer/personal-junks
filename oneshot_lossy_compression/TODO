@@ -1,4 +1,4 @@
--bug: if target extension != current extension, and if the "compressed file" is larger than the original, scripts may screw up file extensions.
+-bug: it may not necessarily reduce the file size if the output file extension differs from the input file extension.
 -multithreading
 -doc
 -docx
