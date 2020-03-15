@@ -69,7 +69,7 @@ check_smaller ()
 	MIN_DESIRED_OSIZE=`expr \( $ISIZE \* $SIZE_REQ \) / 100`
 	
 	if [ "$MIN_DESIRED_OSIZE" -lt "$OSIZE" ]; then
-		echo "Input smaller than output, doing straight copy" >&2
+		echo "Input smaller than desired; doing straight copy" >&2
 		cp "$1" "$2"
 	fi
 }
