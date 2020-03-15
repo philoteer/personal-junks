@@ -24,7 +24,7 @@ first_file=$(head -n 1 "$TMP_LIST_FILENAME")
 cp "$first_file" "$TMP_FILENAME_1" 
 sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG $SIZE_ARG || { echo 'something is wrong' ; exit 1; }
 
-if [ -f "$TMP_FILENAME_2" ]; then
+if [ ! -f "$TMP_FILENAME_2" ]; then
 	rm "$TMP_FILENAME_1"
 	echo 'something is very wrong'
 	exit 2
