@@ -86,4 +86,4 @@ fi
 
 shrink "$IFILE" "$OFILE" "$res" || exit $?
 
-check_smaller "$IFILE" "$OFILE"
+check_smaller "$IFILE" "$OFILE" $size_req
