@@ -45,7 +45,7 @@ check_smaller ()
 		return 0;
 	fi
 	
-	if [! -z "$3" ]; then
+	if [ ! -z "$3" ]; then
 		SIZE_REQ="$3"
 	else
 		SIZE_REQ="100"
