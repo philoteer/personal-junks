@@ -49,10 +49,10 @@ shrink ()
 		if [ $FOO = 0 ];
 		then
 			#grayscale
-			convert $f  -strip -quality $3 -interlace JPEG -colorspace Gray -resize "x1200>" "$f"
+			convert "$f"  -strip -quality $3 -interlace JPEG -colorspace Gray -resize "x1200>" "$f"
 		else
 			#color
-			convert $f -sampling-factor 4:2:0 -strip -quality $3 -interlace JPEG -colorspace RGB -resize "x1200>" "$f"
+			convert "$f" -sampling-factor 4:2:0 -strip -quality $3 -interlace JPEG -colorspace RGB -resize "x1200>" "$f"
 		fi
 		
 	done
