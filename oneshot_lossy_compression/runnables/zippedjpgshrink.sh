@@ -37,8 +37,8 @@ shrink ()
 	dir_name="__tmp_zjs"
 	unar -o $dir_name $1
 
-	find ./${dir_name} -name '*.*' -print0 |
-	while IFS= read -r -d '' f; do
+	find ./${dir_name} -name '*.*' |
+	while read f;
 	do
 		#taken from: http://www.imagemagick.org/discourse-server/viewtopic.php?t=34020
 		#detect grayscale
