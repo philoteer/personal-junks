@@ -43,7 +43,7 @@ shrink ()
 		#taken from: http://www.imagemagick.org/discourse-server/viewtopic.php?t=34020
 		#detect grayscale
 		echo $f
-		COLOUREDNESS=$(convert $f -colorspace HCL -format %[fx:mean.g] info:)
+		COLOUREDNESS=$(convert "$f" -colorspace HCL -format %[fx:mean.g] info:)
 
 		FOO=$(echo "$COLOUREDNESS > 0.02" |bc -l)
 
