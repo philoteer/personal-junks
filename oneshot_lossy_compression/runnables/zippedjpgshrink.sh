@@ -38,11 +38,37 @@ shrink ()
 	unar -o $dir_name $1
 
 	find ./${dir_name} -name '*.*' |
+
 	while read f;
 	do
 		#taken from: http://www.imagemagick.org/discourse-server/viewtopic.php?t=34020
 		#detect grayscale
 		echo $f
+
+		name=$(basename -- "$f")
+		f_ext="${name##*.}"
+		f_ext_tolower=$(echo $f_ext | tr '[:upper:]' '[:lower:]')
+		
+		if [ "$f_ext_tolower" = "gif" ] || [ "$f_ext_tolower" = "jpg" ] || [ "$f_ext_tolower" = "jpeg" ];
+		then
+			f_out="$f"
+		else
+			f_out="${f}.jpg"
+		fi
+
+		#prevent html2ps
+		if [ $f_ext_tolower = "htm" ] || [ $f_ext_tolower = "html" ];
+		then
+			continue;
+		fi
+
+
+		#leave psd files alone.
+		if [ $f_ext_tolower = "psd" ];
+		then
+			continue;
+		fi
+
 		COLOUREDNESS=$(convert "$f" -colorspace HCL -format %[fx:mean.g] info:)
 
 		FOO=$(echo "$COLOUREDNESS > 0.02" |bc -l)
@@ -50,15 +76,26 @@ shrink ()
 		if [ $FOO = 0 ];
 		then
 			#grayscale
-			convert "$f"  -strip -quality $3 -interlace JPEG -colorspace Gray -resize "x1200>" "$f"
+			convert "$f"  -strip -quality $3 -interlace JPEG -colorspace Gray -resize "x1200>" "$f_out"
 		else
 			#color
-			convert "$f" -sampling-factor 4:2:0 -strip -quality $3 -interlace JPEG -colorspace RGB -resize "x1200>" "$f"
+			convert "$f" -sampling-factor 4:2:0 -strip -quality $3 -interlace JPEG -colorspace RGB -resize "x1200>" "$f_out"
 		fi
+
 		
+		#rm the original file if necessary
+		if [ "$f" = "$f_out" ];
+		then
+			continue
+		else
+			if [ -f "$f_out" ]; then
+				rm "$f"
+			fi
+		fi
+			
 	done
 	
-	zip -j -r $2 ./${dir_name}
+	zip -r $2 ./${dir_name}
 
 	rm -rf $dir_name
 
