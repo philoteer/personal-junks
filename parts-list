@@ -1,15 +1,21 @@
-tl1140af070q : Trackball button (https://electronics.stackexchange.com/questions/56973/kensington-trackball-button)
-1909261003_PANASONIC-EVQP0E07K_C395225.pdf : Trackball button? (Panasonic)
-Mits PDA Pinout https://connector.pinouts.ru/19_pin_Samsung_PDA_special/
+Trackball
+    tl1140af070q : Trackball button (https://electronics.stackexchange.com/questions/56973/kensington-trackball-button)
+    1909261003_PANASONIC-EVQP0E07K_C395225.pdf : Trackball button? (Panasonic)
 
-src: http://www.thinkwiki.org/wiki/Power_Connector
+Mits M330
+    Mits PDA Pinout https://connector.pinouts.ru/19_pin_Samsung_PDA_special/
 
-19 Volt Coax connector
-IBM called it "barrel connector, slim". 19 V, 45 W 2.4 A. 5.5 mm outer, 2.1 mm inner diameter. Option Marketing number 11J8702. See AC adapter matrix (Doc PD012162) as a source of information.
+IBM Connector
+    src: http://www.thinkwiki.org/wiki/Power_Connector
+    19 Volt Coax connector
+    IBM called it "barrel connector, slim". 19 V, 45 W 2.4 A. 5.5 mm outer, 2.1 mm inner diameter. Option Marketing number 11J8702. See AC adapter matrix (Doc PD012162) as a source of information.
+        WorkPad Z50 (Type 2608) FRU 02K6560, 02K6562
+        ThinkPad 310 (Type 2600): P/N 11J8627, FRU 02K6900;
+        ThinkPad 310, 310D, 310E, 310ED
+        ThinkPad i Series 1400 and 1500 (type 2611) (reference Doc LWIK-3Z7J5H)
+            i Series 1410, i Series 1411, i Series 1412, i Series 1450, i Series 1451, i Series 1452, i Series 1472
+            i Series 1512, i Series 1552
 
-    WorkPad Z50 (Type 2608) FRU 02K6560, 02K6562
-    ThinkPad 310 (Type 2600): P/N 11J8627, FRU 02K6900;
-    ThinkPad 310, 310D, 310E, 310ED
-    ThinkPad i Series 1400 and 1500 (type 2611) (reference Doc LWIK-3Z7J5H)
-        i Series 1410, i Series 1411, i Series 1412, i Series 1450, i Series 1451, i Series 1452, i Series 1472
-        i Series 1512, i Series 1552
+Pinecil
+    T12 tip handle: Hakko B3217
+    adapter needed
