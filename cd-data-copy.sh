@@ -12,12 +12,15 @@ CNT=0
 for i in /dev/sr*; do
 	sudo mkdir "/mnt/cd_$CNT"
 	sudo mount "$i" "/mnt/cd_$CNT"
-	cp -R "/mnt/cd_$CNT/" $1 
+	cp -R "/mnt/cd_$CNT" $1 &
 	CNT=$((CNT+1))
 done
 
+#sync
+echo "waiting.."
 wait
 
+#cleanup
 for i in /mnt/cd*; do
 	sudo umount "$i"
 	sudo rmdir "$i"
