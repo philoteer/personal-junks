@@ -26,7 +26,7 @@ for i in /mnt/cd*; do
 	sudo rmdir "$i"
 done
 
-#sudo chmod -R 777 "$1/cd_*"
+#sudo chmod -R 777 "$1/"cd_*
 
 for i in /dev/sr*; do
 	eject $i
