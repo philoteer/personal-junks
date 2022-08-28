@@ -26,5 +26,11 @@ for i in /mnt/cd*; do
 	sudo rmdir "$i"
 done
 
+#sudo chmod -R 777 "$1/cd_*"
+
+for i in /dev/sr*; do
+	eject $i
+done
+
 #play beep.wav
 xmessage -center "Done (hopefully)."
