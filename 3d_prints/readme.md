@@ -1,1 +1,1 @@
-Random OpenSCAD scripts (MIT)
+Random OpenSCAD scripts (MIT license, if anyone is bothered)
