@@ -1,2 +1,14 @@
-https://velog.io/@pikamon/Linux-Kernel-1#4-make
-https://github.com/umiddelb/armhf/wiki/How-To-compile-a-custom-Linux-kernel-for-your-ARM-device#download-kernel-sources
+# src 1: https://velog.io/@pikamon/Linux-Kernel-1#4-make
+# src 2: https://github.com/umiddelb/armhf/wiki/How-To-compile-a-custom-Linux-kernel-for-your-ARM-device#download-kernel-sources
+
+sudo apt install -y git lzop make u-boot-tools gcc-aarch64-linux-gnu g++-aarch64-linux-gnu 	cscope libssl-dev libncurses-dev	autoconf automake autotools-dev curl libmpc-dev libmpfr-dev 	libgmp-dev gawk build-essential bison flex texinfo 	gperf libtool patchutils bc zlib1g-dev libexpat-dev
+
+unxz linux-6.6.12.tar.xz 
+tar -xvf linux-6.6.12.tar 
+cd linux-6.6.12/
+
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+make menuconfig
+make savedefconfig
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 
+
