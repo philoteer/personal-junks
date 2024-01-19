@@ -10,5 +10,5 @@ cd linux-6.6.12/
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 make menuconfig
 make savedefconfig
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 dtbs modules
 
