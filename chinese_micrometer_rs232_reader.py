@@ -1,9 +1,9 @@
-#!/user/bin/env python3
+#!/usr/bin/env python3
 
 #ref: https://wikidocs.net/188633
 import serial
 
-PORT_NAME = "COM3"
+PORT_NAME = "/dev/ttyUSB0"
 SAVE_PATH = "out.txt"
 
 ser = serial.Serial(
@@ -32,7 +32,7 @@ while(True):
 			num_buf = ""
 		else:
 			print(num_buf[1:])
-			f_out.write(f"{num_buf[1:]}\n")
+			f_out.write(f"{num_buf[1]}{num_buf[3:]}\n")
 			f_out.flush()
 			num_buf = ""
 	else:
