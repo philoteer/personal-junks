@@ -2,41 +2,66 @@
 
 #ref: https://wikidocs.net/188633
 import serial
+import threading
+import time
 
-PORT_NAME = "/dev/ttyUSB0"
-SAVE_PATH = "out.txt"
+PORT_NAMES = {"one":"/dev/ttyUSB0","two":"/dev/ttyUSB1"}
+SAVE_PATHS = {"one":"out1.txt", "two":"out2.txt"}
 
-ser = serial.Serial(
-	port = PORT_NAME, 
-	baudrate=9600, 
-	parity='N',
-	stopbits=1,
-	bytesize=8,
-	timeout=8,
-	xonxoff=1
-	)
+ser = {}
+f_out = {}
+num_buf = {}
+header_cnt = {}
+start_time = time.time()
 
-ser.isOpen()
+for PORT_NAME in PORT_NAMES:
+	ser[PORT_NAME] = serial.Serial(
+		port = PORT_NAMES[PORT_NAME], 
+		baudrate=9600, 
+		parity='N',
+		stopbits=1,
+		bytesize=8,
+		timeout=8,
+		xonxoff=1
+		)
 
-f_out = open(SAVE_PATH, 'w')
+	ser[PORT_NAME].isOpen()
 
-num_buf=""
+	f_out[PORT_NAME] = open(SAVE_PATHS[PORT_NAME], 'w')
 
-header_cnt = 3
+	num_buf[PORT_NAME]=""
 
-while(True):
-	input_data = ser.read(1)
-	if (int.from_bytes(input_data)) == 13:
-		if(header_cnt > 0):
-			header_cnt -= 1
-			num_buf = ""
+	header_cnt[PORT_NAME] = 3
+
+def rx_thread(PORT_NAME):
+	while(True):
+		input_data = ser[PORT_NAME].read(1)
+		if (int.from_bytes(input_data)) == 13:
+			if(header_cnt[PORT_NAME] > 0):
+				header_cnt[PORT_NAME] -= 1
+				num_buf[PORT_NAME] = ""
+			else:
+				print(f"{PORT_NAME}: {num_buf[PORT_NAME][1:]}")
+				f_out[PORT_NAME].write(f"{time.time()-start_time},{num_buf[PORT_NAME][1]}{num_buf[PORT_NAME][3:]}\n")
+				f_out[PORT_NAME].flush()
+				num_buf[PORT_NAME] = ""
 		else:
-			print(num_buf[1:])
-			f_out.write(f"{num_buf[1]}{num_buf[3:]}\n")
-			f_out.flush()
-			num_buf = ""
-	else:
-		num_buf = f"{num_buf}{input_data.decode('ascii')}"
+			try:
+				num_buf[PORT_NAME] = f"{num_buf[PORT_NAME]}{input_data.decode('ascii')}"
+			except:
+				pass
 
 
-f_out.close()
+threads = {}
+for PORT_NAME in PORT_NAMES:
+	threads[PORT_NAME] = (threading.Thread(target=rx_thread, args=(PORT_NAME,)))
+	
+for PORT_NAME in PORT_NAMES:
+	threads[PORT_NAME].start()
+	print(f"Thread Started. ({PORT_NAMES[PORT_NAME]})")
+
+while (True):
+	time.sleep(5)
+	
+for PORT_NAME in PORT_NAMES:
+	f_out[PORT_NAME].close()
