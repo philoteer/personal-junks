@@ -7,3 +7,6 @@ else
 fi
 
 ffmpeg -i "$1" -vn -threads 1 -acodec copy "${OFILE}"
+
+# album art:
+#ffmpeg -i "$1" -ss 00:00:10 -vframes 1 "${1}.jpg"
