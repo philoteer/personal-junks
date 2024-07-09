@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ ! -z "$2" ]; then
+	OFILE="$2"
+else
+	OFILE="$1".mka
+fi
+
+ffmpeg -i "$1" -vn -threads 1 -acodec copy "${OFILE}"
