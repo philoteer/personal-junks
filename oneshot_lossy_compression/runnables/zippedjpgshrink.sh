@@ -73,7 +73,7 @@ shrink ()
 
 		FOO=$(echo "$COLOUREDNESS > 0.02" |bc -l)
 
-		if [ $FOO = 0 ];
+		if [ "$FOO" = 0 ];
 		then
 			#grayscale
 			convert "$f"  -strip -quality $3 -interlace JPEG -colorspace Gray -resize "x1200>" "$f_out"
