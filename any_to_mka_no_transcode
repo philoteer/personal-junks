@@ -1,12 +1,16 @@
 #!/bin/sh
 
 if [ ! -z "$2" ]; then
-	OFILE="$2"
+	ART_T="${2}"
 else
-	OFILE="$1".mka
+	ART_T="00:00:10"
 fi
 
-ffmpeg -i "$1" -vn -threads 1 -acodec copy "${OFILE}"
+FILENAME=$(basename -- "$1")
+FILENAME="${FILENAME%.*}" #https://stackoverflow.com/questions/965053/extract-filename-and-extension-in-bash
 
-# album art:
-#ffmpeg -i "$1" -ss 00:00:10 -vframes 1 "${1}.jpg"
+OFILE="$FILENAME".mka
+OFILE_ART="$FILENAME".jpg
+
+ffmpeg -i "$1" -vn -threads 1 -acodec copy "${OFILE}"
+ffmpeg -i "$1" -ss "${ART_T}" -vframes 1 "${OFILE_ART}"
