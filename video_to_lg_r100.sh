@@ -11,6 +11,3 @@ ffmpeg -i "$1" -filter:v "transpose=2,scale=608:1080,setsar=1,pad=608:1230:0:75:
 ffmpeg -i _left.mkv -i _right.mkv -filter_complex "hstack" -codec:v $ENCODER "$1_R100.mkv"
 rm _left.mkv
 rm _right.mkv
-
-#playback: mplayer -monitorpixelaspect 1.5 rollercoaster-LGR100.mp4
- 
