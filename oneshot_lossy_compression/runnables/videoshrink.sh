@@ -96,7 +96,7 @@ else
 fi
 
 
-ffmpeg="/home/piloteer/ffmpeg/ffmpeg"
+ffmpeg="ffmpeg"
 
 
 shrink "$IFILE" "$OFILE" "$res" || exit $?
