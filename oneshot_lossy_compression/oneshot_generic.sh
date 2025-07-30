@@ -1,16 +1,18 @@
 #!/bin/bash	
-
-#(for now, some bashisms are going on)
+# Parallel for ref: https://stackoverflow.com/questions/38774355/how-to-parallelize-for-loop-in-bash-limiting-number-of-processes
 
 #list of variables
-#EXTENSION=ps
-#TARGET_EXTENSION=pdf
-#EXEC_PATH="pdfshrink.sh"
-#QUAL_ARG=150 
-SIZE_ARG=80
+if [ -z ${SIZE_ARG} ]; then 
+	SIZE_ARG=80
+fi
 
-TMP_FILENAME_1="__1.${EXTENSION}"	#original file (temporarily copied)
-TMP_FILENAME_2="__2.${TARGET_EXTENSION}"	#output file
+if [ -z ${NUM_PROCESS} ]; then 
+	NUM_PROCESS=1
+fi
+num_jobs="\j"
+
+#echo "$SIZE_ARG $NUM_PROCESS"
+
 TMP_LIST_FILENAME="__${EXTENSION}_list"
 
 #get file list
@@ -21,46 +23,74 @@ LINES_COUNT=$(wc -l "$TMP_LIST_FILENAME" | awk '{print $1}')
 #exec functionality check
 echo "Verifying the functionality of the converter program."
 first_file=$(head -n 1 "$TMP_LIST_FILENAME")
-cp "$first_file" "$TMP_FILENAME_1" 
-sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG $SIZE_ARG || { echo 'something is wrong' ; exit 1; }
+cp "$first_file" "__1.${EXTENSION}" 
 
-if [ ! -f "$TMP_FILENAME_2" ]; then
-	rm "$TMP_FILENAME_1"
+
+sh "$EXEC_PATH" "__1.${EXTENSION}"  "__2.${TARGET_EXTENSION}" $QUAL_ARG $SIZE_ARG || { echo 'something is wrong' ; exit 1; }
+
+if [ ! -f "__2.${TARGET_EXTENSION}" ]; then
+	rm "__1.${EXTENSION}"
 	echo 'something is very wrong'
 	exit 2
 fi
 
-rm "$TMP_FILENAME_1"  "$TMP_FILENAME_2"
+rm "__1.${EXTENSION}"  "__2.${TARGET_EXTENSION}"
 
 echo "converter is working; proceeding to the actual conversion stage."
 
 #Do the actual task.
 IFS=$'\n'
 CURRENT_COUNT=1
+
+function process() {
+	_j="${1}"
+	_EXEC_PATH="${2}"
+	_TMP_FILENAME_1="${3}"
+	_TMP_FILENAME_2="${4}"
+	_QUAL_ARG="${QUAL_ARG}"
+	_SIZE_ARG="${SIZE_ARG}"
+	_EXTENSION="${EXTENSION}"
+	_TARGET_EXTENSION="${TARGET_EXTENSION}"
+	
+	cp "${_j}" "${_TMP_FILENAME_1}"  #used to be mv instead; changed to minimize chance of losing files. 
+	
+	bash "$_EXEC_PATH" "$_TMP_FILENAME_1"  "$_TMP_FILENAME_2" $_QUAL_ARG $_SIZE_ARG || return 1
+	rm "$_TMP_FILENAME_1" 
+	
+
+	if [ ! -f "$_TMP_FILENAME_2" ]; then
+		echo 'something is very wrong'
+		return 1
+	fi
+
+	rm "$_j"
+
+	if [ $_EXTENSION == $_TARGET_EXTENSION ]
+	then
+		mv "$_TMP_FILENAME_2" "$_j"
+	else
+		mv "$_TMP_FILENAME_2" "${_j}.${_TARGET_EXTENSION}"
+	fi
+}
+
 for j in $(cat "./$TMP_LIST_FILENAME")
 do
-	echo "[$CURRENT_COUNT/$LINES_COUNT] $j"
-	cp "$j" "$TMP_FILENAME_1"  #used to be mv instead; changed to minimize chance of losing files. 
-	#sh $EXEC_PATH "$TMP_FILENAME_1" "$TMP_FILENAME_2"|| { echo 'something is wrong' ; exit 1; }
-	sh "$EXEC_PATH" "$TMP_FILENAME_1"  "$TMP_FILENAME_2" $QUAL_ARG $SIZE_ARG || continue
-	rm "$TMP_FILENAME_1" 
+
+	while (( ${num_jobs@P} >= NUM_PROCESS )); do
+		wait -n
+	done
 	
-
-	if [ ! -f "$TMP_FILENAME_2" ]; then
-		echo 'something is very wrong'
-		continue
-	fi
-
-	rm "$j"
-
-	if [ $EXTENSION == $TARGET_EXTENSION ]
-	then
-		mv "$TMP_FILENAME_2" "$j"
-	else
-		mv "$TMP_FILENAME_2" "${j}.${TARGET_EXTENSION}"
-	fi
+	echo "[$CURRENT_COUNT/$LINES_COUNT] $j"
+	
+	process "${j}" "${EXEC_PATH}" "${CURRENT_COUNT}__1.${EXTENSION}" "${CURRENT_COUNT}__2.${TARGET_EXTENSION}" &
+	
 	
 	CURRENT_COUNT=`expr $CURRENT_COUNT + 1`
+done
+
+
+while (( ${num_jobs@P} >= 1 )); do
+	wait -n
 done
 
 #remove the tmp file.
