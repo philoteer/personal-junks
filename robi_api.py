@@ -9,23 +9,29 @@ import requests
 API_URL_GPT = "https://genai.postech.ac.kr/agent/api/a1/gpt"
 API_URL_Gemini = "https://genai.postech.ac.kr/agent/api/a2/gemini"
 API_URL_Claude = "https://genai.postech.ac.kr/agent/api/a3/claude"
+#Adapted from https://github.com/Haayhur/postech-anthropic-proxy (..because reading codes is eaiser than reading official docs, you know).
+API_URL_Claude_A45 = "https://genai.postech.ac.kr/agent/api/a45/anthropic/messages"
 
-def query_robi_api(message: str, api_key: str, API_URL: str, v2: bool) -> dict:
-    if v2:
-        headers = {
-            "x-api-key": api_key,
-            "Authorization": api_key,
-            "Content-Type": "application/json"
-        }
-    else:
-        headers = {
-            "x-api-key": api_key,
-            "Content-Type": "application/json"
-        }
-        
-    payload = {
-        "message": message
+def query_robi_api(message: str, api_key: str, API_URL: str, api_format: str) -> dict:
+    headers = {
+        "x-api-key": api_key,
+        "Content-Type": "application/json"
     }
+    
+    # Configure payload and headers based on the endpoint's expected format
+    if api_format == "v2":
+        headers["Authorization"] = api_key
+        payload = {"message": message}
+    elif api_format == "v1":
+        payload = {"message": message}
+    elif api_format == "anthropic-a45":
+        payload = {
+            "model": "claude-sonnet-4-6", 
+            "max_tokens": 4096,
+            "messages": [
+                {"role": "user", "content": message}
+            ]
+        }
     
     response = None
     try:
@@ -39,12 +45,10 @@ def query_robi_api(message: str, api_key: str, API_URL: str, v2: bool) -> dict:
         sys.exit(1)
 
 def main():
-    # Set up terminal argument parsing
     parser = argparse.ArgumentParser(
         description="CLI client for the Robi G LLM API."
     )
     
-    # Message positional argument (defaults to '안녕하세요' if not provided)
     parser.add_argument(
         "message", 
         type=str, 
@@ -53,7 +57,6 @@ def main():
         help="The prompt/message to send to the LLM."
     )
     
-    # Optional API Key flag (falls back to ROBI_API_KEY environment variable)
     parser.add_argument(
         "-k", "--api-key", 
         type=str, 
@@ -61,16 +64,15 @@ def main():
         help="Your API key. Alternatively, set the ROBI_API_KEY environment variable."
     )
 
-    # Model Selection flag
+    # Added claude-a45 to target the new endpoint explicitly
     parser.add_argument(
         "-m", "--model",
         type=str,
-        choices=["gpt", "gemini", "claude"],
-        default="gemini",
+        choices=["gpt", "gemini", "claude", "claude-a45"],
+        default="claude-a45",
         help="Select the LLM provider to query (default: gemini)."
     )
 
-    # New flag to toggle between clean text and raw JSON
     parser.add_argument(
         "--raw",
         action="store_true",
@@ -79,7 +81,6 @@ def main():
 
     args = parser.parse_args()
 
-    # Validate API key presence
     if not args.api_key:
         print(
             "Error: API key is missing.\n"
@@ -88,30 +89,36 @@ def main():
         )
         sys.exit(1)
 
-    # Map model choice to its respective URL and API version (v2 flag)
+    # Map model choice to its respective URL and API format routing
     model_routing = {
-        "gpt": (API_URL_GPT, False),
-        "gemini": (API_URL_Gemini, True),
-        "claude": (API_URL_Claude, True)
+        "gpt": (API_URL_GPT, "v1"),
+        "gemini": (API_URL_Gemini, "v2"),
+        "claude": (API_URL_Claude, "v2"),
+        "claude-a45": (API_URL_Claude_A45, "anthropic-a45")
     }
     
-    selected_url, is_v2 = model_routing[args.model]
+    selected_url, api_format = model_routing[args.model]
 
-    # Execute the request
-    result = query_robi_api(args.message, args.api_key, selected_url, is_v2)
+    result = query_robi_api(args.message, args.api_key, selected_url, api_format)
     
-    # Handle Output Formatting
     if args.raw:
-        # Prints full raw JSON structure
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
-        # Extracts and cleanly renders the Markdown string
-        if isinstance(result, dict) and "message" in result:
-            print(result["message"])
+        # Handle Output Formatting based on response shape
+        if api_format == "anthropic-a45":
+            # Standard Anthropic response shape
+            if isinstance(result, dict) and "content" in result and len(result["content"]) > 0:
+                print(result["content"][0].get("text", ""))
+            else:
+                print("[!] Warning: Unexpected Anthropic response structure.", file=sys.stderr)
+                print(json.dumps(result, indent=2, ensure_ascii=False))
         else:
-            # Fallback defensively if the API response structure changes
-            print("[!] Warning: 'message' key missing in response. Falling back to raw JSON.", file=sys.stderr)
-            print(json.dumps(result, indent=2, ensure_ascii=False))
+            # Legacy Robi response shape
+            if isinstance(result, dict) and "message" in result:
+                print(result["message"])
+            else:
+                print("[!] Warning: 'message' key missing in response. Falling back to raw JSON.", file=sys.stderr)
+                print(json.dumps(result, indent=2, ensure_ascii=False))
 
 if __name__ == "__main__":
     main()
